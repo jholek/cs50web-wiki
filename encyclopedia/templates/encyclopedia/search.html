@@ -1,0 +1,22 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Search Results
+{% endblock %}
+
+{% block body %}
+
+    {% if query == 'dog' %}
+        <p> Your query of <b>'{{ query }}' </b> has returned the following results:</p>
+        <!-- <ul>
+            {% for result in results %}
+                <li><a href="{% url 'entry' title=entry %}">{{ result }}</a></li>
+            {% endfor %}
+        </ul> -->
+    {% else %}
+        <p> Your query of <b>'{{ query }}' </b> did not return any results.</p>
+    {% endif %}
+
+    
+
+{% endblock %}

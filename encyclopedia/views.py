@@ -21,3 +21,11 @@ def entry(request, title):
         return render(request, "encyclopedia/error.html", {
             "title": f"{title}",
         })
+
+def search(request):
+
+    query = request.GET.get('q')
+
+    return render(request, "encyclopedia/search.html", {
+        "query": f"{query}",
+    })
