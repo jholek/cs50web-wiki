@@ -6,13 +6,13 @@
 
 {% block body %}
 
-    {% if query == 'dog' %}
+    {% if entries %}
         <p> Your query of <b>'{{ query }}' </b> has returned the following results:</p>
-        <!-- <ul>
-            {% for result in results %}
-                <li><a href="{% url 'entry' title=entry %}">{{ result }}</a></li>
+        <ul>
+            {% for entry in entries %}
+                <li><a href="{% url 'entry' title=entry %}">{{ entry }}</a></li>
             {% endfor %}
-        </ul> -->
+        </ul>
     {% else %}
         <p> Your query of <b>'{{ query }}' </b> did not return any results.</p>
     {% endif %}
