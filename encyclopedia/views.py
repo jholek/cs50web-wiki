@@ -1,4 +1,5 @@
 import random
+import markdown2
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -22,7 +23,7 @@ def entry(request, title):
     if content != None:
         return render(request, "encyclopedia/entry.html", {
             "title": f"{title}",
-            "content": f"{content}",
+            "content": markdown2.markdown(f"{content}"),
         })
     else:
         return render(request, "encyclopedia/error.html", {
@@ -34,19 +35,16 @@ def entry(request, title):
 def search(request):
 
     query = request.GET.get('q')
-    entries = util.list_entries()
+    pages = util.list_entries()
     matches = []
 
-    for entry in entries:
-        if entry.lower() == query.lower():
-            content = util.get_entry(entry)
+    for page in pages:
+        if page.lower() == query.lower():
+            return entry(request, page)
 
-            return render(request, "encyclopedia/entry.html", {
-            "title": f"{entry}",
-            "content": f"{content}",
-            })
-        if query.lower() in entry.lower():
-            matches.append(entry)
+        if query.lower() in page.lower():
+            matches.append(page)
+            print(matches)
 
     return render(request, "encyclopedia/search.html", {
         "query": f"{query}",
