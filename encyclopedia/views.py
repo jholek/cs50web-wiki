@@ -1,15 +1,19 @@
-from django.urls import reverse
+import random
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django import forms
 
 from . import util
 
+## --- VIEW ENTRIES ---
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })
+
+## --- VIEW ENTRY CONTENT ---
 
 def entry(request, title):
 
@@ -24,6 +28,8 @@ def entry(request, title):
         return render(request, "encyclopedia/error.html", {
             "title": f"{title}",
         })
+
+## --- SEARCH ENTRIES ---
 
 def search(request):
 
@@ -47,12 +53,13 @@ def search(request):
         "entries": matches
     })
 
+
+## --- CREATE NEW PAGE ---
 class NewPageForm(forms.Form):
     title= forms.CharField(label="Page Title")
     content= forms.CharField(label="Page Content", widget=forms.Textarea())
 
 def new(request):
-
     if request.method == "POST":
         form = NewPageForm(request.POST)
 
@@ -60,16 +67,13 @@ def new(request):
             if form.is_valid():
                 title = form.cleaned_data["title"]
                 content = form.cleaned_data["content"]
-            
-# Check for existing entries before saving.
                 duplicateEntry = util.get_entry(title)
-
+# Check for existing entries before saving.
                 if not duplicateEntry:
                     util.save_entry(title, content)
                     return HttpResponseRedirect(f"/wiki/{title}")
                 else:
                     raise Exception(f"Entry {duplicateEntry} already exists.")
-
             else:
                 raise Exception("Form entry not valid.")
 
@@ -83,3 +87,8 @@ def new(request):
     return render(request, "encyclopedia/new.html", {
         "form": NewPageForm()
     })
+
+## --- RANDOM PAGE ---
+def randomPage(request):
+    entries = util.list_entries()
+    return entry(request, entries[random.randint(0,len(entries)-1)])
