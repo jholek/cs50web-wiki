@@ -85,7 +85,37 @@ def new(request):
 
 # Default form render for non-POST requests.
     return render(request, "encyclopedia/new.html", {
-        "form": NewPageForm()
+        "form": NewPageForm(),
+    })
+
+
+## --- EDIT PAGE ---
+class EditPageForm(forms.Form):
+    content= forms.CharField(label="Page Content", widget=forms.Textarea())
+
+def edit(request, title):
+    if request.method == "POST":
+        form = EditPageForm(request.POST)
+
+        try:
+            if form.is_valid():
+                content = form.cleaned_data["content"]
+                util.save_entry(title, content)
+                return HttpResponseRedirect(f"/wiki/{title}")
+            else:
+                raise Exception("Form entry not valid.")
+
+        except Exception as err:
+                return render(request, "encyclopedia/edit.html", {
+                    "form": form,
+                    "title": title,
+                    "err": err,
+                })
+
+# Default form render for non-POST requests.
+    return render(request, "encyclopedia/edit.html", {
+        "form": EditPageForm(initial={"content": util.get_entry(title)}),
+        "title": title,
     })
 
 ## --- RANDOM PAGE ---
